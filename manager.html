@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Manager Home Page</title>
+        <meta name="description" content="Landing page for manager">
+        <meta name="keywords" content="manager home CS509 WPI">
+    </head>
+    <body>
+        <h1>Welcome Manager!</h1>
+        <form>
+            <label for="shipment-list">Unprocessed Shipments:</label>
+            <ul id="shipment-list">
+                <li>Shipment 1</li>
+                <li>Shipment 2</li>
+                <li>Shipment 3</li>
+                <br><br>
+            </ul>
+            <label for="item-list">Items in Shipment:</label>
+            <ul id="item-list">
+                <li>Item 1</li>
+                <li>Item 2</li>
+                <li>Item 3</li>
+            </ul>
+            <label for="store">Enter Store:</label>
+            <input type="text" id="store" name="store" value=""><br><br>
+            <label for="aisle">Enter Aisle:</label>
+            <input type="text" id="aisle" name="aisle" value=""><br><br>
+            <input type="submit" value="Stock">
+            <input type="submit" value="Overstock">
+        </form>
+        <form>
+            <label for="overstock-list">Items in Overstock:</label>
+            <ul id="overstock-list">
+                <li>Item 1</li>
+                <li>Item 2</li>
+                <li>Item 3</li>
+            </ul>
+            <input type="submit" value="Fill to Max">
+        </form>
+        <form>
+            <input type="submit" value="Produce Report"><br>
+            <label for="store-report">Your Store:</label>
+            <ul id="store-report">
+                <li>Item 1</li>
+                <li>Item 2</li>
+                <li>Item 3</li>
+            </ul>
+        </form>
+    </body>
+</html>
