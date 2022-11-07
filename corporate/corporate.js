@@ -3,7 +3,10 @@ var base_url = "https://15qu2mzzpa.execute-api.us-east-1.amazonaws.com/Prod/";
 var createStore_url = base_url + "createStore";      // POST: {arg1:5, arg2:7}
 var createItem_url = base_url + "createItem";
 var assignLocation_url = base_url + "assignLocation";
-
+window.onload = function() {
+    console.log(localStorage)
+}
+    
 function processCreateStoreResponse(arg1, arg2, store_name, result, status) {
     // Can grab any DIV or SPAN HTML element and can then manipulate its
     // contents dynamically via javascript
