@@ -10,13 +10,16 @@ window.onload = function() {
 function processCreateStoreResponse(arg1, arg2, store_name, result, status) {
     // Can grab any DIV or SPAN HTML element and can then manipulate its
     // contents dynamically via javascript
+    console.log(result);
     var js = JSON.parse(result);
-
+    var items = JSON.parse(js.body);
+    console.log(items);
     var result  = js["result"];
-
     // Update computation result
-    if (status == 200) {
-        result.forEach(function(store) {
+    if (js.statusCode == 200) {
+        var title = document.createElement("h3");
+        title.innerHTML = "Existing Stores:";
+        items.result.forEach(function(store) {
             var li = document.createElement("li");
             var text = document.createTextNode(store.lat + " " + store.long + " " + store.store_name + " " + store.manager_name + " " + store.manager_pw);
             li.appendChild(text);
@@ -24,7 +27,6 @@ function processCreateStoreResponse(arg1, arg2, store_name, result, status) {
         });
     } else {
         var msg = js["error"];   // only exists if error...
-        document.createStoreForm.result.innerText = "error:" + msg
         document.getElementById("storeList").innerHTML = "error:" + msg;
     }
 }
@@ -38,6 +40,8 @@ function handleCreateStoreClick(e) {
     var manager_pw = form.s_manager_pw.value;
 
     var data = {};
+    data["c_username"] = localStorage.getItem("c_username");
+    data["c_password"] = localStorage.getItem("c_password");
     data["latitude"] = latitude;
     data["longitude"] = longitude;
     data["store_name"] = store_name;
@@ -45,13 +49,18 @@ function handleCreateStoreClick(e) {
     data["manager_pw"] = manager_pw;
 
     var js = JSON.stringify(data);
+    nest = {};
+    nest["body"] = js
     console.log(data)
 
     var xhr = new XMLHttpRequest();
     xhr.open("POST", createStore_url, true);
 
     // send the collected data as JSON
-    xhr.send(js);
+    let newjs = JSON.stringify(nest);
+    console.log(newjs);
+    // send the collected data as JSON
+    xhr.send(newjs);
 
     // This will process results and update HTML as appropriate. 
     xhr.onloadend = function () {
@@ -66,13 +75,16 @@ function handleCreateStoreClick(e) {
 function processCreateItemResponse(sku, item_name, desc, price, max_q, result, status) {
     // Can grab any DIV or SPAN HTML element and can then manipulate its
     // contents dynamically via javascript
+    console.log(result);
     var js = JSON.parse(result);
-
+    var items = JSON.parse(js.body);
+    console.log(items);
     var result  = js["result"];
-
     // Update computation result
-    if (status == 200) {
-        result.forEach(function(item) {
+    if (js.statusCode == 200) {
+        var title = document.createElement("h3");
+        title.innerHTML = "Existing Items:";
+        items.result.forEach(function(item) {
             var li = document.createElement("li");
             var text = document.createTextNode(item.sku + " " + item.name + " " + item.description + " " + item.price + " " + item.max_q);
             li.appendChild(text);
@@ -80,7 +92,6 @@ function processCreateItemResponse(sku, item_name, desc, price, max_q, result, s
         });
     } else {
         var msg = js["error"];   // only exists if error...
-        document.createItemForm.result.innerText = "error:" + msg
         document.getElementById("itemList").innerHTML = "error:" + msg;
     }
 }
@@ -94,20 +105,26 @@ function handleCreateItemClick(e) {
     var max_q = form.maxQ.value;
 
     var data = {};
+    data["c_username"] = localStorage.getItem("c_username");
+    data["c_password"] = localStorage.getItem("c_password");
     data["sku"] = sku;
     data["item_name"] = item_name;
     data["desc"] = description;
     data["price"] = price;
     data["max_q"] = max_q;
-
+    nest = {};
+    
     var js = JSON.stringify(data);
-    console.log(data)
+    nest["body"] = js
 
+    console.log(data)
+    console.log(nest)
     var xhr = new XMLHttpRequest();
     xhr.open("POST", createItem_url, true);
-
+    let newjs = JSON.stringify(nest);
+    console.log(newjs);
     // send the collected data as JSON
-    xhr.send(js);
+    xhr.send(newjs);
 
     // This will process results and update HTML as appropriate. 
     xhr.onloadend = function () {
@@ -127,13 +144,12 @@ function processAssignLocationResponse(sku, aisle, shelf, result, status) {
     var result  = js["result"];
 
     // Update computation result
-    if (status == 200) {
-        window.alert(result)
-        document.getElementById("itemList").innerText = result;
+    if (js.statusCode == 200) {
+        console.log(JSON.parse(js.body));
+        document.getElementById("assign-location-response").innerText = JSON.parse(js.body).result;
     } else {
         var msg = js["error"];   // only exists if error...
-        document.createItemForm.result.innerText = "error:" + msg
-        document.getElementById("itemList").innerHTML = "error:" + msg;
+        document.getElementById("assign-location-response").innerHTML = "error:" + msg;
     }
 }
 
@@ -144,18 +160,24 @@ function handleAssignLocationClick(e) {
     var shelf = form.shelf.value;
 
     var data = {};
+    data["c_username"] = localStorage.getItem("c_username");
+    data["c_password"] = localStorage.getItem("c_password");
     data["sku"] = sku;
     data["aisle"] = aisle;
     data["shelf"] = shelf;
-
+    nest = {};
+    
     var js = JSON.stringify(data);
-    console.log(data)
+    nest["body"] = js
 
+    console.log(data)
+    console.log(nest)
     var xhr = new XMLHttpRequest();
     xhr.open("POST", assignLocation_url, true);
-
+    let newjs = JSON.stringify(nest);
+    console.log(newjs);
     // send the collected data as JSON
-    xhr.send(js);
+    xhr.send(newjs);
 
     // This will process results and update HTML as appropriate. 
     xhr.onloadend = function () {

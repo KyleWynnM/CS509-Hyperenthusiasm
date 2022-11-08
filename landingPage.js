@@ -12,7 +12,6 @@ function processCorporateLoginResponse(arg1, arg2, store_name, result, status) {
 
     // Update computation result
     if (status == 200) {
-        window.alert(result.c_username)
         localStorage.setItem("c_username", result.c_username);
         localStorage.setItem("c_password", result.c_password);
         window.location.href = "./corporate/corporate.html";
@@ -62,7 +61,6 @@ function processManagerLoginResponse(arg1, arg2, store_name, result, status) {
 
     // Update computation result
     if (status == 200) {
-        window.alert(result.s_username)
         localStorage.setItem("m_username", result.s_username);
         localStorage.setItem("m_password", result.s_password);
         localStorage.setItem("store_id", result.s_store_id);

@@ -4,50 +4,36 @@
         <title>Manager Home Page</title>
         <meta name="description" content="Landing page for manager">
         <meta name="keywords" content="manager home CS509 WPI">
+        <link rel="stylesheet" href="manager.css">
+        <script type="text/javascript" src="manager.js"></script>
     </head>
     <body>
         <div class="grid-container">
-        <h1>Welcome Manager!</h1>
-        <form>
-            <label for="shipment-list">Unprocessed Shipments:</label>
-            <ul id="shipment-list">
-                <li>Shipment 1</li>
-                <li>Shipment 2</li>
-                <li>Shipment 3</li>
-                <br><br>
-            </ul>
-            <label for="item-list">Items in Shipment:</label>
-            <ul id="item-list">
-                <li>Item 1</li>
-                <li>Item 2</li>
-                <li>Item 3</li>
-                <li>Item 4</li>
-            </ul>
-            <label for="store">Enter Store:</label>
-            <input type="text" id="store" name="store" value=""><br><br>
-            <label for="aisle">Enter Aisle:</label>
-            <input type="text" id="aisle" name="aisle" value=""><br><br>
-            <input type="submit" value="Stock">
-            <input type="submit" value="Overstock">
-        </form>
-        <form>
-            <label for="overstock-list">Items in Overstock:</label>
-            <ul id="overstock-list">
-                <li>Item 1</li>
-                <li>Item 2</li>
-                <li>Item 3</li>
-            </ul>
-            <input type="submit" value="Fill to Max">
-        </form>
-        <form>
-            <input type="submit" value="Produce Report"><br>
-            <label for="store-report">Your Store:</label>
-            <ul id="store-report">
-                <li>Item 1</li>
-                <li>Item 2</li>
-                <li>Item 3</li>
-            </ul>
-        </form>
+            <div id="welcome-msg">
+                <h1>Welcome Manager!</h1>
+            </div>
+            <div class="process-shipment-container">
+                <h2>Process Shipment</h2>
+                <form name="processShipmentForm" method="post" name="addValues">
+                    <label for="sku">Enter SKU:</label>
+                    <input id="sku" name="sku" value=""><br><br>
+                    <label for="qty">Enter Quantity:</label>
+                    <input id="qty" name="qty" value=""><br><br>
+                    <input type="button" value="Process Shipment" onClick="JavaScript:handleProcessShipmentClick(this)" />
+                    <div id="processResponse">
+
+                    </div>
+                </form>
+            </div>
+            <div class="generate-report-container">
+                <h2>Generate Inventory Report</h2>
+                <form name="generateReportForm" method="post" name="addValues">
+                    <input type="button" value="Generate" onClick="JavaScript:handleGenerateInventoryReportClick(this)" />
+                    <div id="generateReportResponse">
+
+                    </div>
+                </form>
+            </div>
         </div>
     </body>
 </html>
