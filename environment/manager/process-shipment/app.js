@@ -89,13 +89,31 @@ let mySqlErrorHandler = function(error) {
         })
     }
     
+    let ValidateManagerUser = (m_username, m_password) => {
+        return new Promise((resolve, reject) => {
+            pool.query("SELECT * FROM Store WHERE s_manager_name=? AND s_manager_pw=?", [m_username, m_password], (error, rows) => {
+                if (error) { 
+                    return reject(error); 
+                } else if (rows.length === 0) {
+                    return resolve(false);
+                } else {
+                    return resolve(true);
+                }
+            })
+        })
+    }
+    
     let body = {};
     
     try {
         let qty_value = parseInt(info.quantity);
         let values_valid = await ValidateValues(info.sku, info.quantity);
+        let userValid = await ValidateManagerUser(info.m_username, info.m_password);
         
-        if (isNaN(qty_value)) {
+        if (!userValid) {
+            response.statusCode = 400;
+            response.error = "user not authenticated, please log in from home page";
+        } else if (isNaN(qty_value)) {
             response.statusCode = 400;
             response.error = "non-numeric price input.";
         } else if (!values_valid) {

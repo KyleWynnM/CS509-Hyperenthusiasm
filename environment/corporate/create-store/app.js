@@ -71,6 +71,20 @@ function makeStoreID(length) {
     let info = JSON.parse(actual_body);
     console.log("info:" + JSON.stringify(info));
     
+    let ValidateCorporateUser = (c_username, c_password) => {
+        return new Promise((resolve, reject) => {
+            pool.query("SELECT * FROM Corporate WHERE c_name=? AND c_pw=?", [c_username, c_password], (error, rows) => {
+                if (error) { 
+                    return reject(error); 
+                } else if (rows.length === 0) {
+                    return resolve(false);
+                } else {
+                    return resolve(true);
+                }
+            })
+        })
+    }
+    
     let AddStoreToDB = (lat, long, store_name, manager_name, manager_pw) => {
         let store_id = makeStoreID(10);
         return new Promise((resolve, reject) => {
@@ -104,7 +118,11 @@ function makeStoreID(length) {
         let store_name = info.store_name;
         let manager_name = info.manager_name;
         let manager_pw = info.manager_pw;
-        if (isNaN(latitude_value) || isNaN(longitude_value)) {
+        let userValid = await ValidateCorporateUser(info.c_username, info.c_password);
+        if (!userValid) {
+            response.statusCode = 400;
+            response.error = "user not authenticated, please log in from home page";
+        } else if (isNaN(latitude_value) || isNaN(longitude_value)) {
             response.statusCode = 400;
             response.error = "non-numeric GPS input.";
         } else if ((latitude_value > 90) || (latitude_value < -90)) {

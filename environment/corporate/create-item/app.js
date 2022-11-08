@@ -85,13 +85,31 @@ let mySqlErrorHandler = function(error) {
         })
     }
     
+    let ValidateCorporateUser = (c_username, c_password) => {
+        return new Promise((resolve, reject) => {
+            pool.query("SELECT * FROM Corporate WHERE c_name=? AND c_pw=?", [c_username, c_password], (error, rows) => {
+                if (error) { 
+                    return reject(error); 
+                } else if (rows.length === 0) {
+                    return resolve(false);
+                } else {
+                    return resolve(true);
+                }
+            })
+        })
+    }
+    
     let body = {};
     
     try {
         let price_value = parseFloat(info.price);
         let max_q_value = parseInt(info.max_q);
         let store_name = info.store_name;
-        if (isNaN(price_value)) {
+        let userValid = await ValidateCorporateUser(info.c_username, info.c_password);
+        if (!userValid) {
+            response.statusCode = 400;
+            response.error = "user not authenticated, please log in from home page";
+        } else if (isNaN(price_value)) {
             response.statusCode = 400;
             response.error = "non-numeric price input.";
         } else if (isNaN(max_q_value)) {
