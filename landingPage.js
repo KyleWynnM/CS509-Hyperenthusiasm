@@ -62,7 +62,7 @@ function processManagerLoginResponse(arg1, arg2, store_name, result, status) {
 
     // Update computation result
     if (status == 200) {
-        window.alert(result.c_username)
+        window.alert(result.s_username)
         localStorage.setItem("m_username", result.s_username);
         localStorage.setItem("m_password", result.s_password);
         localStorage.setItem("store_id", result.s_store_id);
@@ -76,7 +76,7 @@ function processManagerLoginResponse(arg1, arg2, store_name, result, status) {
 }
 
 function handleManagerLoginClick(e) {
-    var form = document.corporateLogInForm;
+    var form = document.managerLogInForm;
     var s_manager_name = form.m_username.value;
     var s_manager_pw = form.m_password.value;
 
@@ -96,9 +96,9 @@ function handleManagerLoginClick(e) {
     // This will process results and update HTML as appropriate. 
     xhr.onloadend = function () {
         if (xhr.readyState == XMLHttpRequest.DONE) {
-            processCorporateLoginResponse(s_manager_name, s_manager_name, s_manager_name, xhr.responseText, xhr.status);
+            processManagerLoginResponse(s_manager_name, s_manager_name, s_manager_name, xhr.responseText, xhr.status);
         } else {
-            processCorporateLoginResponse(s_manager_name, s_manager_name, s_manager_name, "N/A", xhr.status);
+            processManagerLoginResponse(s_manager_name, s_manager_name, s_manager_name, "N/A", xhr.status);
         }
     };
 }
