@@ -7,15 +7,15 @@ function processCorporateLoginResponse(arg1, arg2, store_name, result, status) {
     // Can grab any DIV or SPAN HTML element and can then manipulate its
     // contents dynamically via javascript
     var js = JSON.parse(result);
-
     var result  = js["result"];
-
+    var credentials = JSON.parse(js.body);
+    console.log(credentials)
     // Update computation result
-    if (status == 200) {
-        localStorage.setItem("c_username", result.c_username);
-        localStorage.setItem("c_password", result.c_password);
+    if (js.statusCode == 200) {
+        localStorage.setItem("c_username", credentials.result.c_username);
+        localStorage.setItem("c_password", credentials.result.c_password);
         window.location.href = "./corporate/corporate.html";
-    } else if (status === 401) {
+    } else if (js.statusCode === 401) {
         document.getElementById("c_loginResponse").innerHTML = "Invalid login credentials, try again please"
     } else {
         var msg = js["error"];   // only exists if error...
@@ -32,15 +32,19 @@ function handleCorporateLoginClick(e) {
     data["c_name"] = c_name;
     data["c_pw"] = c_pw;
  
-
     var js = JSON.stringify(data);
+    nest = {};
+    nest["body"] = js
     console.log(data)
 
     var xhr = new XMLHttpRequest();
     xhr.open("POST", log_in_corporate_url, true);
 
     // send the collected data as JSON
-    xhr.send(js);
+    let newjs = JSON.stringify(nest);
+    console.log(newjs);
+    // send the collected data as JSON
+    xhr.send(newjs);
 
     // This will process results and update HTML as appropriate. 
     xhr.onloadend = function () {
@@ -58,14 +62,14 @@ function processManagerLoginResponse(arg1, arg2, store_name, result, status) {
     var js = JSON.parse(result);
 
     var result  = js["result"];
-
+    var credentials = JSON.parse(js.body);
     // Update computation result
-    if (status == 200) {
-        localStorage.setItem("m_username", result.s_username);
-        localStorage.setItem("m_password", result.s_password);
-        localStorage.setItem("store_id", result.s_store_id);
+    if (js.statusCode == 200) {
+        localStorage.setItem("m_username", credentials.result.s_username);
+        localStorage.setItem("m_password", credentials.result.s_password);
+        localStorage.setItem("store_id", credentials.result.s_store_id);
         window.location.href = "./manager/manager.html";
-    } else if (status === 401) {
+    } else if (js.statusCode === 401) {
         document.getElementById("m_loginResponse").innerHTML = "Invalid login credentials, try again please"
     } else {
         var msg = js["error"];   // only exists if error...
@@ -81,15 +85,20 @@ function handleManagerLoginClick(e) {
     var data = {};
     data["s_manager_name"] = s_manager_name;
     data["s_manager_pw"] = s_manager_pw;
- 
+    
     var js = JSON.stringify(data);
+    nest = {};
+    nest["body"] = js
     console.log(data)
 
     var xhr = new XMLHttpRequest();
     xhr.open("POST", log_in_manager_url, true);
 
     // send the collected data as JSON
-    xhr.send(js);
+    let newjs = JSON.stringify(nest);
+    console.log(newjs);
+    // send the collected data as JSON
+    xhr.send(newjs);
 
     // This will process results and update HTML as appropriate. 
     xhr.onloadend = function () {

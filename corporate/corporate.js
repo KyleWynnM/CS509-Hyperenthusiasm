@@ -17,12 +17,16 @@ function processCreateStoreResponse(arg1, arg2, store_name, result, status) {
     var result  = js["result"];
     // Update computation result
     if (js.statusCode == 200) {
+        window.alert("Success!");
         var title = document.createElement("h3");
         title.innerHTML = "Existing Stores:";
         items.result.forEach(function(store) {
             var li = document.createElement("li");
             var text = document.createTextNode(store.lat + " " + store.long + " " + store.store_name + " " + store.manager_name + " " + store.manager_pw);
             li.appendChild(text);
+            var deleteButton = document.createElement("button");
+            deleteButton.innerText = "Delete";
+            li.appendChild(deleteButton);
             document.getElementById("storeList").appendChild(li);
         });
     } else {
