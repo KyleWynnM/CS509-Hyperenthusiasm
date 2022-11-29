@@ -63,7 +63,7 @@ let mySqlErrorHandler = function(error) {
     
     let GenerateReport = (store_id) => {
         return new Promise((resolve, reject) => {
-            pool.query("SELECT * from Overstock WHERE o_store_id=?", [store_id], (error, rows) => {
+            pool.query("SELECT * from Inventory WHERE inv_store_id=?", [store_id], (error, rows) => {
                     if (error) { 
                         return reject(error); 
                     } else {
@@ -75,7 +75,7 @@ let mySqlErrorHandler = function(error) {
     
     let GetPrice = (item) => {
         return new Promise((resolve, reject) => {
-            pool.query("SELECT * from Item WHERE i_sku=?", [item.o_sku], (error, rows) => {
+            pool.query("SELECT * from Item WHERE i_sku=?", [item.inv_sku], (error, rows) => {
                     if (error) { 
                         return reject(error); 
                     } else {
@@ -113,7 +113,7 @@ let mySqlErrorHandler = function(error) {
             for (const item of report) {
                 price = await GetPrice(item);
                 item.price = price;
-                total += price * item.o_qty;
+                total += price * item.inv_qty;
             }
             body["result"] = {"report" : report, "total" : total};
             response.statusCode = 200;

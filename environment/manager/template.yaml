@@ -25,10 +25,10 @@ Resources:
           Properties:
             Path: /processShipment
             Method: post
-  GenerateInventoryReportFunction:
+  ManagerGenerateInventoryReportFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
-      CodeUri: generate-inventory-report/
+      CodeUri: manager-generate-inventory-report/
       Handler: app.lambdaHandler
       Runtime: nodejs14.x
       Architectures:
@@ -37,7 +37,7 @@ Resources:
         ProcessShipment:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
-            Path: /generateInventoryReport
+            Path: /managerGenerateInventoryReport
             Method: post
   FillShelvesFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
@@ -82,15 +82,15 @@ Outputs:
   ProcessShipmentFunctionIamRole:
     Description: "Implicit IAM Role created for Process Shipment function"
     Value: !GetAtt ProcessShipmentFunctionRole.Arn
-  GenerateInventoryReportApi:
+  ManagerGenerateInventoryReportApi:
     Description: "API Gateway endpoint URL for Prod stage for ProcessShipment function"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/generateInventoryReport/"
-  GenerateInventoryReportFunction:
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/managerGenerateInventoryReport/"
+  ManagerGenerateInventoryReportFunction:
     Description: "Generate Inventory Report Lambda Function ARN"
-    Value: !GetAtt GenerateInventoryReportFunction.Arn
-  GenerateInventoryReportFunctionIamRole:
+    Value: !GetAtt ManagerGenerateInventoryReportFunction.Arn
+  ManagerGenerateInventoryReportFunctionIamRole:
     Description: "Implicit IAM Role created for Generate Inventory Report function"
-    Value: !GetAtt GenerateInventoryReportFunctionRole.Arn
+    Value: !GetAtt ManagerGenerateInventoryReportFunctionRole.Arn
   FillShelvesApi:
     Description: "API Gateway endpoint URL for Prod stage for Fill Shelves function"
     Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/fillShelves/"
