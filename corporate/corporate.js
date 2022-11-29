@@ -3,8 +3,215 @@ var base_url = "https://15qu2mzzpa.execute-api.us-east-1.amazonaws.com/Prod/";
 var createStore_url = base_url + "createStore";      // POST: {arg1:5, arg2:7}
 var createItem_url = base_url + "createItem";
 var assignLocation_url = base_url + "assignLocation";
+var removeStore_url = base_url + "removeStore";
+var listStores_url = base_url + "listStores";
+var generateInventoryReport_url = base_url + "generateInventoryReport";
+
 window.onload = function() {
     console.log(localStorage)
+}
+
+function processListStoresResponse(result, status) {
+    // Can grab any DIV or SPAN HTML element and can then manipulate its
+    // contents dynamically via javascript
+    console.log(result);
+    var js = JSON.parse(result);
+    var items = JSON.parse(js.body);
+    console.log(items);
+    var result  = js["result"];
+    // Update computation result
+    if (js.statusCode == 200) {
+        let container = document.getElementById("storeList");
+        container.innerHTML = "";
+        var tbl = document.createElement('table');
+        tbl.style.width = '100%';
+        tbl.setAttribute('border', '1');
+        var tbdy = document.createElement('tbody');
+        for (var i = 0; i < items.result.length; i++) {
+            var tr = document.createElement('tr');
+            for (var j = 0; j < 7; j++) {
+                var td = document.createElement('td');
+                if (j % 7 === 0) {
+                    td.innerHTML = items.result[i].lat;
+                } else if (j % 7 === 1) {
+                    td.innerHTML = items.result[i].long;
+                } else if (j % 7 === 2) {
+                    td.innerHTML = items.result[i].store_name;
+                } else if (j % 7 === 3) {
+                    td.innerHTML = items.result[i].manager_name;
+                } else if (j % 7 === 4) {
+                    td.innerHTML = items.result[i].manager_pw;
+                } else if (j % 7 === 5) {
+                    td.innerHTML = items.result[i].store_id;
+                } else {
+                    var removeButton = document.createElement("input");
+                    removeButton.value = "Remove";
+                    removeButton.type = "button";
+                    removeButton.setAttribute("onclick", "JavaScript:handleRemoveStoreClick(this, \""+items.result[i].store_id+"\");");
+                    td.appendChild(removeButton);
+                }
+                tr.appendChild(td)
+            }
+            tbdy.appendChild(tr);
+        }
+        let thead = document.createElement('thead');
+        let latH = document.createElement('td');
+        let longH = document.createElement('td');
+        let nameH = document.createElement('td');
+        let manager_nameH = document.createElement('td');
+        let manager_pwH = document.createElement('td');
+        let store_id = document.createElement('td');
+        latH.innerHTML = "Latitude";
+        longH.innerHTML = "Longitude";
+        nameH.innerHTML = "Store Name";
+        manager_nameH.innerHTML = "Manager Name";
+        manager_pwH.innerHTML = "Manager Password";
+        store_id.innerHTML = "Store ID";
+        thead.appendChild(latH);
+        thead.appendChild(longH);
+        thead.appendChild(nameH);
+        thead.appendChild(manager_nameH);
+        thead.appendChild(manager_pwH);
+        thead.appendChild(store_id);
+        tbl.appendChild(thead);
+        tbl.appendChild(tbdy);
+        container.appendChild(tbl);
+    } else {
+        var msg = js["error"];   // only exists if error...
+        document.getElementById("storeList").innerHTML = "error:" + msg;
+    }
+}
+
+function handleListStoresClick(e, store_id) {
+    
+    var data = {};
+    data["c_username"] = localStorage.getItem("c_username");
+    data["c_password"] = localStorage.getItem("c_password");
+
+    var js = JSON.stringify(data);
+    nest = {};
+    nest["body"] = js
+    console.log(data)
+
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", listStores_url, true);
+
+    // send the collected data as JSON
+    let newjs = JSON.stringify(nest);
+    console.log(newjs);
+    // send the collected data as JSON
+    xhr.send(newjs);
+
+    // This will process results and update HTML as appropriate. 
+    xhr.onloadend = function () {
+        if (xhr.readyState == XMLHttpRequest.DONE) {
+            processListStoresResponse(xhr.responseText, xhr.status);
+        } else {
+            processListStoresResponse("N/A", xhr.status);
+        }
+    };
+}
+
+function processRemoveStoreResponse(result, status) {
+    // Can grab any DIV or SPAN HTML element and can then manipulate its
+    // contents dynamically via javascript
+    console.log(result);
+    var js = JSON.parse(result);
+    var items = JSON.parse(js.body);
+    console.log(items);
+    var result  = js["result"];
+    // Update computation result
+    if (js.statusCode == 200) {
+        let container = document.getElementById("storeList");
+        container.innerHTML = "";
+        var tbl = document.createElement('table');
+        tbl.style.width = '100%';
+        tbl.setAttribute('border', '1');
+        var tbdy = document.createElement('tbody');
+        for (var i = 0; i < items.result.length; i++) {
+            var tr = document.createElement('tr');
+            for (var j = 0; j < 7; j++) {
+                var td = document.createElement('td');
+                if (j % 7 === 0) {
+                    td.innerHTML = items.result[i].lat;
+                } else if (j % 7 === 1) {
+                    td.innerHTML = items.result[i].long;
+                } else if (j % 7 === 2) {
+                    td.innerHTML = items.result[i].store_name;
+                } else if (j % 7 === 3) {
+                    td.innerHTML = items.result[i].manager_name;
+                } else if (j % 7 === 4) {
+                    td.innerHTML = items.result[i].manager_pw;
+                } else if (j % 7 === 5) {
+                    td.innerHTML = items.result[i].store_id;
+                } else {
+                    var removeButton = document.createElement("input");
+                    removeButton.value = "Remove";
+                    removeButton.type = "button";
+                    removeButton.setAttribute("onclick", "JavaScript:handleRemoveStoreClick(this, \""+items.result[i].store_id+"\");");
+                    td.appendChild(removeButton);
+                }
+                tr.appendChild(td)
+            }
+            tbdy.appendChild(tr);
+        }
+        let thead = document.createElement('thead');
+        let latH = document.createElement('td');
+        let longH = document.createElement('td');
+        let nameH = document.createElement('td');
+        let manager_nameH = document.createElement('td');
+        let manager_pwH = document.createElement('td');
+        let store_id = document.createElement('td');
+        latH.innerHTML = "Latitude";
+        longH.innerHTML = "Longitude";
+        nameH.innerHTML = "Store Name";
+        manager_nameH.innerHTML = "Manager Name";
+        manager_pwH.innerHTML = "Manager Password";
+        store_id.innerHTML = "Store ID";
+        thead.appendChild(latH);
+        thead.appendChild(longH);
+        thead.appendChild(nameH);
+        thead.appendChild(manager_nameH);
+        thead.appendChild(manager_pwH);
+        thead.appendChild(store_id);
+        tbl.appendChild(thead);
+        tbl.appendChild(tbdy);
+        container.appendChild(tbl);
+    } else {
+        var msg = js["error"];   // only exists if error...
+        document.getElementById("storeList").innerHTML = "error:" + msg;
+    }
+}
+
+function handleRemoveStoreClick(e, store_id) {
+    
+    var data = {};
+    data["c_username"] = localStorage.getItem("c_username");
+    data["c_password"] = localStorage.getItem("c_password");
+    data["store_id"] = store_id;
+
+    var js = JSON.stringify(data);
+    nest = {};
+    nest["body"] = js
+    console.log(data)
+
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", removeStore_url, true);
+
+    // send the collected data as JSON
+    let newjs = JSON.stringify(nest);
+    console.log(newjs);
+    // send the collected data as JSON
+    xhr.send(newjs);
+
+    // This will process results and update HTML as appropriate. 
+    xhr.onloadend = function () {
+        if (xhr.readyState == XMLHttpRequest.DONE) {
+            processRemoveStoreResponse(xhr.responseText, xhr.status);
+        } else {
+            processRemoveStoreResponse("N/A", xhr.status);
+        }
+    };
 }
     
 function processCreateStoreResponse(arg1, arg2, store_name, result, status) {
@@ -17,18 +224,61 @@ function processCreateStoreResponse(arg1, arg2, store_name, result, status) {
     var result  = js["result"];
     // Update computation result
     if (js.statusCode == 200) {
-        window.alert("Success!");
-        var title = document.createElement("h3");
-        title.innerHTML = "Existing Stores:";
-        items.result.forEach(function(store) {
-            var li = document.createElement("li");
-            var text = document.createTextNode(store.lat + " " + store.long + " " + store.store_name + " " + store.manager_name + " " + store.manager_pw);
-            li.appendChild(text);
-            var deleteButton = document.createElement("button");
-            deleteButton.innerText = "Delete";
-            li.appendChild(deleteButton);
-            document.getElementById("storeList").appendChild(li);
-        });
+        let container = document.getElementById("storeList");
+        container.innerHTML = "";
+        var tbl = document.createElement('table');
+        tbl.style.width = '100%';
+        tbl.setAttribute('border', '1');
+        var tbdy = document.createElement('tbody');
+        for (var i = 0; i < items.result.length; i++) {
+            var tr = document.createElement('tr');
+            for (var j = 0; j < 7; j++) {
+                var td = document.createElement('td');
+                if (j % 7 === 0) {
+                    td.innerHTML = items.result[i].lat;
+                } else if (j % 7 === 1) {
+                    td.innerHTML = items.result[i].long;
+                } else if (j % 7 === 2) {
+                    td.innerHTML = items.result[i].store_name;
+                } else if (j % 7 === 3) {
+                    td.innerHTML = items.result[i].manager_name;
+                } else if (j % 7 === 4) {
+                    td.innerHTML = items.result[i].manager_pw;
+                } else if (j % 7 === 5) {
+                    td.innerHTML = items.result[i].store_id;
+                } else {
+                    var removeButton = document.createElement("input");
+                    removeButton.value = "Remove";
+                    removeButton.type = "button";
+                    removeButton.setAttribute("onclick", "JavaScript:handleRemoveStoreClick(this, \""+items.result[i].store_id+"\");");
+                    td.appendChild(removeButton);
+                }
+                tr.appendChild(td)
+            }
+            tbdy.appendChild(tr);
+        }
+        let thead = document.createElement('thead');
+        let latH = document.createElement('td');
+        let longH = document.createElement('td');
+        let nameH = document.createElement('td');
+        let manager_nameH = document.createElement('td');
+        let manager_pwH = document.createElement('td');
+        let store_id = document.createElement('td');
+        latH.innerHTML = "Latitude";
+        longH.innerHTML = "Longitude";
+        nameH.innerHTML = "Store Name";
+        manager_nameH.innerHTML = "Manager Name";
+        manager_pwH.innerHTML = "Manager Password";
+        store_id.innerHTML = "Store ID";
+        thead.appendChild(latH);
+        thead.appendChild(longH);
+        thead.appendChild(nameH);
+        thead.appendChild(manager_nameH);
+        thead.appendChild(manager_pwH);
+        thead.appendChild(store_id);
+        tbl.appendChild(thead);
+        tbl.appendChild(tbdy);
+        container.appendChild(tbl);
     } else {
         var msg = js["error"];   // only exists if error...
         document.getElementById("storeList").innerHTML = "error:" + msg;
@@ -86,6 +336,7 @@ function processCreateItemResponse(sku, item_name, desc, price, max_q, result, s
     var result  = js["result"];
     // Update computation result
     if (js.statusCode == 200) {
+        document.getElementById("itemList").innerHTML = "";
         var title = document.createElement("h3");
         title.innerHTML = "Existing Items:";
         items.result.forEach(function(item) {
@@ -189,6 +440,100 @@ function handleAssignLocationClick(e) {
             processAssignLocationResponse(sku, aisle, shelf, xhr.responseText, xhr.status);
         } else {
             processAssignLocationResponse(sku, aisle, shelf, "N/A", xhr.status);
+        }
+    };
+}
+
+function processGenerateInventoryReportResponse(store_id, result, status) {
+    // Can grab any DIV or SPAN HTML element and can then manipulate its
+    // contents dynamically via javascript
+    console.log(result);
+    var js = JSON.parse(result);
+
+    var result  = js["result"];
+    var data = JSON.parse(js.body);
+    console.log(data);
+
+    // Update computation result
+    if (js.statusCode == 200) {
+        let container = document.getElementById("generateReportResponse");
+        var tbl = document.createElement('table');
+        tbl.style.width = '100%';
+        tbl.setAttribute('border', '1');
+        var tbdy = document.createElement('tbody');
+        for (var i = 0; i < data.result.report.length; i++) {
+            var tr = document.createElement('tr');
+            for (var j = 0; j < 3; j++) {
+                var td = document.createElement('td');
+                if (j % 3 === 0) {
+                    td.innerHTML = data.result.report[i].inv_sku;
+                } else if (j % 3 === 1) {
+                    td.innerHTML = data.result.report[i].inv_qty;
+                } else {
+                    td.innerHTML = data.result.report[i].price;
+                }
+                tr.appendChild(td)
+            }
+            tbdy.appendChild(tr);
+        }
+        let thead = document.createElement('thead');
+        let skuH = document.createElement('td');
+        let qtyH = document.createElement('td');
+        let priceH = document.createElement('td');
+        skuH.innerHTML = "SKU";
+        qtyH.innerHTML = "Quantity";
+        priceH.innerHTML = "Price";
+        thead.appendChild(skuH);
+        thead.appendChild(qtyH);
+        thead.appendChild(priceH);
+        let tfoot = document.createElement('tfoot');
+        let spacer = document.createElement('td');
+        let sumLabel = document.createElement('td');
+        let total = document.createElement('td');
+        sumLabel.innerHTML = "Total";
+        total.innerHTML = data.result.total;
+        tfoot.appendChild(spacer);
+        tfoot.appendChild(sumLabel);
+        tfoot.appendChild(total);
+        tbl.appendChild(thead);
+        tbl.appendChild(tbdy);
+        tbl.appendChild(tfoot);
+        container.appendChild(tbl);
+    } else {
+        var msg = js["error"];   // only exists if error...
+        document.getElementById("generateReportResponse").innerHTML = "error:" + msg;
+    }
+}
+
+function handleGenerateInventoryReportClick(e) {
+    var form = document.generateInventoryReportForm;
+    var store_id = form.store.value;
+
+    var data = {};
+    data["store_id"] = store_id;
+    data["c_username"] = localStorage.getItem("c_username");
+    data["c_password"] = localStorage.getItem("c_password");
+
+    var js = JSON.stringify(data);
+    nest = {};
+    nest["body"] = js
+    console.log(data)
+
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", generateInventoryReport_url, true);
+
+    // send the collected data as JSON
+    let newjs = JSON.stringify(nest);
+    console.log(newjs);
+    // send the collected data as JSON
+    xhr.send(newjs);
+
+    // This will process results and update HTML as appropriate. 
+    xhr.onloadend = function () {
+        if (xhr.readyState == XMLHttpRequest.DONE) {
+            processGenerateInventoryReportResponse(store_id, xhr.responseText, xhr.status);
+        } else {
+            processGenerateInventoryReportResponse(store_id, "N/A", xhr.status);
         }
     };
 }

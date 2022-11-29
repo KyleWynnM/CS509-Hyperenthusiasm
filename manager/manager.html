@@ -4,6 +4,7 @@
         <title>Manager Home Page</title>
         <meta name="description" content="Landing page for manager">
         <meta name="keywords" content="manager home CS509 WPI">
+        <link rel="stylesheet" href="../general.css">
         <link rel="stylesheet" href="manager.css">
         <script type="text/javascript" src="manager.js"></script>
     </head>
@@ -35,13 +36,12 @@
                 </form>
             </div>
             <div class="overstock-items-container">
-                <h2>Overstocked Items</h2>
-                <form name="" method="post" name="addValues">
-                    <input type="button" value="Generate" onClick="" />
-                    <div id="generateReportResponse">
-                        Item 1, Item 2, Item 3
+                <h2>Generate Overstock Report</h2>
+                <form name="generateOverstockReportForm" method="post" name="addValues">
+                    <input type="button" value="Generate" onClick="JavaScript:handleGenerateOverstockReportClick(this)" />
+                    <div id="generateOverstockReportResponse">
+
                     </div>
-                    <input type="button" value="Fill Shelves" onClick="" />
                 </form>
             </div>
             <div class="missing-items-container">
