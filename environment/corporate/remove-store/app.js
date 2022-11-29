@@ -61,20 +61,25 @@ let mySqlErrorHandler = function(error) {
     let info = JSON.parse(actual_body);
     console.log("info:" + JSON.stringify(info));
     
-    let AddItemToAisleAndShelf = (sku, aisle_num, shelf_num) => {
+    let RemoveStoreFromDB = (store_id) => {
         return new Promise((resolve, reject) => {
-            pool.query("SELECT * FROM Item WHERE i_sku=?", [sku], (error, rows) => {
+            pool.query("DELETE FROM Store WHERE s_store_id=?", [store_id], (error, rows) => {
                 if (error) {
                     return reject(error);
-                } else if (rows.length === 0) {
-                    return resolve("The item with SKU " + sku + " is not in the item database and cannot be assigned a location")
                 } else {
-                    pool.query("INSERT INTO Location (l_sku, l_aisle, l_shelf) VALUES (?, ?, ?)", [sku, aisle_num, shelf_num], (error, rows) => {
-                        if (error) { 
-                            return reject(error); 
-                        } else {
-                            return resolve("Successfully added " + sku + " to aisle " + aisle_num + ", shelf " + shelf_num);
+                    pool.query("SELECT * FROM Store", (error, rows) => {
+                        let newStoreList = [];
+                        for (const row of rows) {
+                            newStoreList.push({
+                                "store_id" : row.s_store_id,
+                                "lat" : row.s_latitude,
+                                "long" : row.s_longitude,
+                                "store_name" : row.s_name,
+                                "manager_name" : row.s_manager_name,
+                                "manager_pw" : row.s_manager_pw
+                            });
                         }
+                        return resolve(newStoreList);
                     })
                 }
             })
@@ -98,20 +103,12 @@ let mySqlErrorHandler = function(error) {
     let body = {};
     
     try {
-        let aisle_value = parseInt(info.aisle);
-        let shelf_value = parseInt(info.shelf);
         let userValid = await ValidateCorporateUser(info.c_username, info.c_password);
         if (!userValid) {
             response.statusCode = 400;
             response.error = "user not authenticated, please log in from home page";
-        } else if (isNaN(aisle_value)) {
-            response.statusCode = 400;
-            response.error = "non-int aisle input.";
-        } else if (isNaN(shelf_value)) {
-            response.statusCode = 400;
-            response.error = "non-int shelf input";
         } else {
-            body["result"] = await AddItemToAisleAndShelf(info.sku, info.aisle, info.shelf);
+            body["result"] = await RemoveStoreFromDB(info.store_id);
             response.statusCode = 200;
         }
     } catch (err) {

@@ -96,6 +96,7 @@ function makeStoreID(length) {
                             let newStoreList = [];
                             for (const row of rows) {
                                 newStoreList.push({
+                                    "store_id" : row.s_store_id,
                                     "lat" : row.s_latitude,
                                     "long" : row.s_longitude,
                                     "store_name" : row.s_name,
