@@ -53,6 +53,20 @@ Resources:
           Properties:
             Path: /findItem
             Method: post
+  BuyItemFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: buy-item/
+      Handler: app.lambdaHandler
+      Runtime: nodejs14.x
+      Architectures:
+        - x86_64
+      Events:
+        BuyItem:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /buyItem
+            Method: post
 
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
@@ -85,3 +99,12 @@ Outputs:
   FindItemFunctionIamRole:
     Description: "Implicit IAM Role created for Find Item function"
     Value: !GetAtt FindItemFunctionRole.Arn
+  BuyItemApi:
+    Description: "API Gateway endpoint URL for Prod stage for Buy Item function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/buyItem/"
+  BuyItemFunction:
+    Description: "Buy Item Lambda Function ARN"
+    Value: !GetAtt BuyItemFunction.Arn
+  BuyItemFunctionIamRole:
+    Description: "Implicit IAM Role created for Buy Item function"
+    Value: !GetAtt BuyItemFunctionRole.Arn

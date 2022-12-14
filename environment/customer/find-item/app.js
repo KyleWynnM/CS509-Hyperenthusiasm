@@ -246,6 +246,7 @@ function deg2rad(deg) {
                     let storesWithDistances = await CalculateStoreDistances(stores, info.latitude, info.longitude);
                     let storesOrderedByDistances = await OrderStoresByDistance(storesWithDistances);
                     body["result"] = {
+                        "itemSKU" : item_sku,
                         "itemName" : itemName,
                         "itemDesc" : itemDesc,
                         "stores" : storesOrderedByDistances
