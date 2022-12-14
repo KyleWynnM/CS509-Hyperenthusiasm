@@ -3,6 +3,7 @@ var base_url = "https://ld2qzjy1j8.execute-api.us-east-1.amazonaws.com/Prod/";
 var listStores_url = base_url + "listStores";
 var findItem_url = base_url + "findItem";
 var listItems_url = base_url + "listItems";
+var buyItem_url = base_url + "buyItem";
 
 function processListStoresResponse(result, status) {
     // Can grab any DIV or SPAN HTML element and can then manipulate its
@@ -60,7 +61,7 @@ function processListStoresResponse(result, status) {
         container.appendChild(tbl);
     } else {
         var msg = js["error"];   // only exists if error...
-        document.getElementById("storeList").innerHTML = "error:" + msg;
+        window.alert("error:" + msg);
     }
 }
 
@@ -110,20 +111,28 @@ function processFindItemResponse(result, status) {
         let container = document.getElementById("availabilityList");
         container.innerHTML = "Were you looking for:"
         var itemTbl = document.createElement('table');
+        itemTbl.style.width = '100%';
+        itemTbl.setAttribute('border', '1');
         var th = document.createElement('thead');
         var itemH = document.createElement('td');
         var descH = document.createElement('td');
+        var skuH = document.createElement('td');
         itemH.innerHTML = "Name";
         descH.innerHTML = "Description";
+        skuH.innerHTML = "SKU";
         th.appendChild(itemH);
         th.appendChild(descH);
+        th.appendChild(skuH);
         var itemRow = document.createElement('tr');
         var itemC = document.createElement('td');
         var descC = document.createElement('td');
+        var skuC = document.createElement('td');
         itemC.innerHTML = items.result.itemName;
         descC.innerHTML = items.result.itemDesc;
+        skuC.innerHTML = items.result.itemSKU;
         itemRow.appendChild(itemC);
         itemRow.appendChild(descC);
+        itemRow.appendChild(skuC);
         itemTbl.appendChild(th);
         itemTbl.appendChild(itemRow);
         container.appendChild(itemTbl);
@@ -134,20 +143,34 @@ function processFindItemResponse(result, status) {
         console.log(items.result);
         for (var i = 0; i < items.result.stores.length; i++) {
             var tr = document.createElement('tr');
-            for (var j = 0; j < 6; j++) {
+            for (var j = 0; j < 7; j++) {
                 var td = document.createElement('td');
-                if (j % 6 === 0) {
+                if (j % 7 === 0) {
                     td.innerHTML = items.result.stores[i].qty;
-                } else if (j % 6 === 1) {
+                } else if (j % 7 === 1) {
                     td.innerHTML = items.result.stores[i].store_id;
-                } else if (j % 6 === 2) {
+                } else if (j % 7 === 2) {
                     td.innerHTML = items.result.stores[i].store_name;
-                } else if (j % 6 === 3) {
+                } else if (j % 7 === 3) {
                     td.innerHTML = items.result.stores[i].lat;
-                } else if (j % 6 === 4) {
+                } else if (j % 7 === 4) {
                     td.innerHTML = items.result.stores[i].long;
-                } else {
+                } else if (j % 7 === 5) {
                     td.innerHTML = items.result.stores[i].distanceFromCustomer;
+                } else {
+                    var buyForm = document.createElement('form');
+                    //buyForm.id = items.result.stores[i].store_id;
+                    var quantityInput = document.createElement("input");
+                    quantityInput.id = items.result.stores[i].store_id;
+                    quantityInput.setAttribute("type", "number");
+                    quantityInput.value = 0;
+                    var buyButton = document.createElement("input");
+                    buyButton.value = "Buy";
+                    buyButton.type = "button";
+                    buyButton.setAttribute("onclick", "JavaScript:handleBuyItemClick(this, \""+items.result.stores[i].store_id+"\", \""+items.result.itemSKU+"\");");
+                    buyForm.appendChild(quantityInput);
+                    buyForm.appendChild(buyButton);
+                    td.appendChild(buyForm);
                 }
                 tr.appendChild(td)
             }
@@ -160,18 +183,21 @@ function processFindItemResponse(result, status) {
         let distanceH = document.createElement('td');
         let store_id = document.createElement('td');
         let qtyH = document.createElement('td');
+        let buyH = document.createElement('td');
         qtyH.innerHTML = "Quantity";
         store_id.innerHTML = "Store ID";
         nameH.innerHTML = "Store Name";
         latH.innerHTML = "Latitude";
         longH.innerHTML = "Longitude";
         distanceH.innerHTML = "Distance From You (km)";
+        buyH.innerHTML = "Buy Item";
         thead.appendChild(qtyH);
         thead.appendChild(store_id);
         thead.appendChild(nameH);
         thead.appendChild(latH);
         thead.appendChild(longH);
         thead.appendChild(distanceH);
+        thead.appendChild(buyH);
         tbl.appendChild(thead);
         tbl.appendChild(tbdy);
         container.appendChild(tbl);
@@ -216,6 +242,55 @@ function handleFindItemClick(e) {
             processFindItemResponse(xhr.responseText, xhr.status);
         } else {
             processFindItemResponse("N/A", xhr.status);
+        }
+    };
+}
+
+function processBuyItemResponse(store_id, sku, purchaseQty, result, status) {
+    // Can grab any DIV or SPAN HTML element and can then manipulate its
+    // contents dynamically via javascript
+    console.log(result);
+    var js = JSON.parse(result);
+    var items = JSON.parse(js.body);
+    console.log(items);
+    var result  = js["result"];
+    // Update computation result
+    if (js.statusCode == 200) {
+        window.alert("Successfully purchased " + purchaseQty + " of " + sku + " from " + store_id);
+    } else {
+        var msg = js["error"];   // only exists if error...
+        window.alert("error:" + msg);
+    }
+}
+
+function handleBuyItemClick(e, store_id, sku) {
+    var purchaseQty = document.getElementById(store_id).value;
+
+    var data = {};
+    data["sku"] = sku;
+    data["store_id"] = store_id;
+    data["quantity"] = purchaseQty;
+
+    var js = JSON.stringify(data);
+    nest = {};
+    nest["body"] = js
+    console.log(data)
+
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", buyItem_url, true);
+
+    // send the collected data as JSON
+    let newjs = JSON.stringify(nest);
+    console.log(newjs);
+    // send the collected data as JSON
+    xhr.send(newjs);
+
+    // This will process results and update HTML as appropriate. 
+    xhr.onloadend = function () {
+        if (xhr.readyState == XMLHttpRequest.DONE) {
+            processBuyItemResponse(store_id, sku, purchaseQty, xhr.responseText, xhr.status);
+        } else {
+            processBuyItemResponse(store_id, sku, purchaseQty, "N/A", xhr.status);
         }
     };
 }

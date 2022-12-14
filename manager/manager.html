@@ -15,12 +15,14 @@
             </div>
             <div class="process-shipment-container">
                 <h2>Process Shipment</h2>
+                <label for="numItems"># of Items in Shipment:</label>
+                <input type="text" id="numItems" name="numItems" value=""><br />
+                <a href="#" id="" onclick="addFields()">Open Form</a>
                 <form name="processShipmentForm" method="post" name="addValues">
-                    <label for="sku">Enter SKU:</label>
-                    <input id="sku" name="sku" value=""><br><br>
-                    <label for="qty">Enter Quantity:</label>
-                    <input id="qty" name="qty" value=""><br><br>
-                    <input type="button" value="Process Shipment" onClick="JavaScript:handleProcessShipmentClick(this)" />
+                    <div id="container">
+
+                    </div>
+                    <input type="button" value="Process" id="processButton" style="visibility: hidden;" onClick="JavaScript:handleProcessShipmentClick(this)" />
                     <div id="processResponse">
 
                     </div>
@@ -42,13 +44,23 @@
                     <div id="generateOverstockReportResponse">
 
                     </div>
+
+                </form>
+            </div>
+            <div class="fill-shelves-container">
+                <h2>Fill Shelves</h2>
+                <form name="generateOverstockReportForm" method="post" name="addValues">
+                    <input type="button" value="Fill" onClick="JavaScript:handleFillShelvesClick(this)" />
+                    <div id="fillShelvesResponse">
+
+                    </div>
                 </form>
             </div>
             <div class="missing-items-container">
                 <h2>Show Missing Items</h2>
                 <form name="" method="post" name="addValues">
-                    <input type="button" value="Generate" onClick="" />
-                    <div id="generateReportResponse">
+                    <input type="button" value="Show" onClick="JavaScript:handleShowMissingItemsClick(this)" />
+                    <div id="showMissingItemsResponse">
 
                     </div>
                 </form>

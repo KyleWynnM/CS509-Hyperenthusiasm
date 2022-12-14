@@ -6,6 +6,7 @@ var assignLocation_url = base_url + "assignLocation";
 var removeStore_url = base_url + "removeStore";
 var listStores_url = base_url + "listStores";
 var generateInventoryReport_url = base_url + "generateInventoryReport";
+var generateTotalInventoryReport_url = base_url + "generateTotalInventoryReport";
 
 window.onload = function() {
     console.log(localStorage)
@@ -534,6 +535,121 @@ function handleGenerateInventoryReportClick(e) {
             processGenerateInventoryReportResponse(store_id, xhr.responseText, xhr.status);
         } else {
             processGenerateInventoryReportResponse(store_id, "N/A", xhr.status);
+        }
+    };
+}
+
+function processGenerateTotalInventoryReportResponse(store_id, result, status) {
+    // Can grab any DIV or SPAN HTML element and can then manipulate its
+    // contents dynamically via javascript
+    console.log(result);
+    var js = JSON.parse(result);
+
+    var result  = js["result"];
+    var data = JSON.parse(js.body);
+    console.log(data);
+
+    // Update computation result
+    if (js.statusCode == 200) {
+        let container = document.getElementById("generateTotalReportResponse");
+        var list = document.createElement('table');
+        for (var s = 0; s < data.result.storeInfos.length; s++) {
+            var tbl = document.createElement('table');
+            tbl.style.width = '100%';
+            tbl.setAttribute('border', '1');
+            var tbdy = document.createElement('tbody');
+            for (var i = 0; i < data.result.reports[s].length; i++) {
+                var tr = document.createElement('tr');
+                for (var j = 0; j < 3; j++) {
+                    var td = document.createElement('td');
+                    if (j % 3 === 0) {
+                        td.innerHTML = data.result.reports[s][i].inv_sku;
+                    } else if (j % 3 === 1) {
+                        td.innerHTML = data.result.reports[s][i].inv_qty;
+                    } else {
+                        td.innerHTML = data.result.reports[s][i].price;
+                    }
+                    tr.appendChild(td)
+                }
+                tbdy.appendChild(tr);
+            }
+            let th = document.createElement('thead');
+            let storeNameH = document.createElement('td');
+            let storeIDH = document.createElement('td');
+            storeNameH.innerHTML = data.result.storeInfos[s].storeName;
+            storeIDH.innerHTML = data.result.storeInfos[s].storeID;
+            th.appendChild(storeNameH);
+            th.appendChild(storeIDH);
+            let thead = document.createElement('thead');
+            let skuH = document.createElement('td');
+            let qtyH = document.createElement('td');
+            let priceH = document.createElement('td');
+            skuH.innerHTML = "SKU";
+            qtyH.innerHTML = "Quantity";
+            priceH.innerHTML = "Price";
+            thead.appendChild(skuH);
+            thead.appendChild(qtyH);
+            thead.appendChild(priceH);
+            let tfoot = document.createElement('tfoot');
+            let spacer = document.createElement('td');
+            let sumLabel = document.createElement('td');
+            let total = document.createElement('td');
+            sumLabel.innerHTML = "Total";
+            total.innerHTML = data.result.totals[s];
+            tfoot.appendChild(spacer);
+            tfoot.appendChild(sumLabel);
+            tfoot.appendChild(total);
+            tbl.appendChild(th);
+            tbl.appendChild(thead);
+            tbl.appendChild(tbdy);
+            tbl.appendChild(tfoot);
+            list.appendChild(tbl);
+        }
+        
+        let totalTable = document.createElement('tbl');
+        let tfoot = document.createElement('tfoot');
+        let spacer = document.createElement('td');
+        let sumLabel = document.createElement('td');
+        let total = document.createElement('td');
+        sumLabel.innerHTML = "Final Total: " + data.result.finalTotal;  
+        total.innerHTML = data.result.finalTotal;
+        tfoot.appendChild(sumLabel);
+        list.appendChild(tfoot);
+        container.appendChild(list);
+    } else {
+        var msg = js["error"];   // only exists if error...
+        document.getElementById("generateTotalReportResponse").innerHTML = "error:" + msg;
+    }
+}
+
+function handleGenerateTotalInventoryReportClick(e) {
+    var form = document.generateInventoryReportForm;
+    var store_id = form.store.value;
+
+    var data = {};
+    data["c_username"] = localStorage.getItem("c_username");
+    data["c_password"] = localStorage.getItem("c_password");
+
+    var js = JSON.stringify(data);
+    nest = {};
+    nest["body"] = js
+    console.log(data)
+
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", generateTotalInventoryReport_url, true);
+
+    // send the collected data as JSON
+    let newjs = JSON.stringify(nest);
+    console.log(newjs);
+    // send the collected data as JSON
+    xhr.send(newjs);
+
+    // This will process results and update HTML as appropriate. 
+    xhr.onloadend = function () {
+        if (xhr.readyState == XMLHttpRequest.DONE) {
+            processGenerateTotalInventoryReportResponse(store_id, xhr.responseText, xhr.status);
+        } else {
+            processGenerateTotalInventoryReportResponse(store_id, "N/A", xhr.status);
         }
     };
 }
