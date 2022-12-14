@@ -76,7 +76,7 @@ Resources:
       Architectures:
         - x86_64
       Events:
-        RemoveStore:
+        ListStores:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
             Path: /listStores
@@ -90,10 +90,24 @@ Resources:
       Architectures:
         - x86_64
       Events:
-        RemoveStore:
+        GenerateInventoryReport:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
             Path: /generateInventoryReport
+            Method: post
+  GenerateTotalInventoryReportFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: generate-total-inv-report/
+      Handler: app.lambdaHandler
+      Runtime: nodejs14.x
+      Architectures:
+        - x86_64
+      Events:
+        GenerateTotalInventoryReport:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /generateTotalInventoryReport
             Method: post
 
 Outputs:
@@ -154,3 +168,12 @@ Outputs:
   GenerateInventoryReportFunctionIamRole:
     Description: "Implicit IAM Role created for Generate Inventory Report function"
     Value: !GetAtt GenerateInventoryReportFunctionRole.Arn
+  GenerateTotalInventoryReportApi:
+    Description: "API Gateway endpoint URL for Prod stage for Generate Total Inventory Report function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/generateTotalInventoryReport/"
+  GenerateTotalInventoryReportFunction:
+    Description: "Generate Inventory Report Lambda Function ARN"
+    Value: !GetAtt GenerateTotalInventoryReportFunction.Arn
+  GenerateTotalInventoryReportFunctionIamRole:
+    Description: "Implicit IAM Role created for Generate Total Inventory Report function"
+    Value: !GetAtt GenerateTotalInventoryReportFunctionRole.Arn
