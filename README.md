@@ -91,6 +91,7 @@ To search for an item, fill in the form below the “Search for Item” header. 
 Then fill in the latitude and longitude of the customer and click on Search Item. You will be displayed a table of all stores containing that item with the quantity they have in stock, displayed in ascending order of distance from the specified point.
 
 Buy Item
+
 To buy an item, first utilize the search for item function to specify which item. Then, in each row of the displayed table will be a form with a purchase quantity and a buy button. Fill that in inside the row of the store you want to buy from. Upon success, you will be notified of a successful purchase.
 If you try to buy an invalid quantity (more than in stock, negative amount), you will be notified of the purchase failing.
 
